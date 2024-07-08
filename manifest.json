@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Hello Extensions",
+  "description": "Base Level Extension",
+  "version": "1.0",
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "pop_up.html"
+  },
+  
+  "content_scripts":[
+    {
+      "matches":["https://www.youtube.com/shorts/*"],
+      "js":["content.js"]
+    }
+  ]
+  ,
+  "permissions": ["activeTab","scripting","webNavigation","tabs"],
+  "host_permissions": ["http://*/*", "https://*/*"]
+}
