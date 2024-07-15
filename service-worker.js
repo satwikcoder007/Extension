@@ -8,7 +8,6 @@ async function getTab() {
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action == "changeColour") {
     const tab = await getTab();
-    console.log(tab);
     const color = message.color;
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
@@ -64,7 +63,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
     }
   }
 });
-function incrementShortsCount(tabId) {
+const incrementShortsCount = async(tabId)=> {
   // Ensure the database is available
 
   const transaction = db.transaction(["counters"], "readwrite");
@@ -72,14 +71,22 @@ function incrementShortsCount(tabId) {
 
   const request = objectStore.get("shortsCount");
 
-  request.onsuccess = function (event) {
+  request.onsuccess = async function (event) {
     let cnt = event.target.result.value;
     console.log("cnt=" + cnt);
     cnt++;
-    if (cnt >= 10) {
-      chrome.tabs.update({ url: "https://www.google.com/" })
+    if (cnt >= 3) {
+      chrome.tabs.update({ url: "https://www.youtube.com/" })
+      const tab = await getTab();
+      console.log(tab);
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => {
+          alert("You are in focus mode")
+        }
+      });
     }
-    objectStore.put({ name: "shortsCount", value: cnt });
+    else objectStore.put({ name: "shortsCount", value: cnt });
   };
 
   request.onerror = function (event) {
